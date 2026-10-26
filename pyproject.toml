@@ -1,0 +1,32 @@
+[project]
+name = "kwerimoto-data"
+version = "0.1.0"
+description = "Builds the KweriMoto combined engine-sound dataset (healthy, engine knock, misfire)."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "huggingface_hub>=1.0",
+    "imageio-ffmpeg>=0.5",
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pyarrow>=17",
+    "soundfile>=0.12",
+    "soxr>=0.5",
+    "yt-dlp>=2026.10.21",
+]
+
+[project.scripts]
+kwerimoto-build = "kwerimoto_data.pipeline:main"
+kwerimoto-upload = "kwerimoto_data.publish:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kwerimoto_data"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

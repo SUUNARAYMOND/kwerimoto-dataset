@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Audio and generated outputs are shared through Hugging Face, not Git.
+data/
