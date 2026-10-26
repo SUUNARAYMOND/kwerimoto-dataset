@@ -1,4 +1,5 @@
 import pandas as pd
+import pyarrow.json as paj
 import soundfile as sf
 
 from fake_sources import CAR, MOTORCYCLE, make_audioset, make_huggingface, make_revix, revix_row, silence
@@ -48,13 +49,25 @@ def test_manifest_has_the_agreed_columns(tmp_path):
 
 
 def test_each_split_folder_lists_its_own_clips(tmp_path):
-    # Hugging Face reads prepared/<split>/metadata.csv to build each split
+    # Hugging Face reads prepared/<split>/metadata.jsonl to build each split
     out, manifest = build(tmp_path, [revix_row("car_clean", i, f"V{i:03d}_0.wav") for i in range(1, 12)])
     for split, part in manifest.groupby("split"):
-        metadata = pd.read_csv(out / "prepared" / split / "metadata.csv", keep_default_na=False)
+        metadata = pd.read_json(out / "prepared" / split / "metadata.jsonl", lines=True)
         assert list(metadata.columns) == list(manifest.columns)
         assert sorted(f"prepared/{split}/" + metadata["file_name"]) == sorted(part["file_name"])
         assert (out / "prepared" / split / metadata["file_name"].iloc[0]).exists()
+
+
+def test_split_metadata_files_agree_on_column_types(tmp_path):
+    # Hugging Face refuses splits whose metadata columns differ in type; real_test has
+    # no synthetic clips, so its knock_source column is empty but must still be text.
+    rows = [revix_row("car_knocking", i, f"V{i:03d}_0.wav", f"K{i:03d}_0.wav") for i in range(1, 12)]
+    out, manifest = build(tmp_path, rows)
+    assert "real_test" in set(manifest["split"])
+    schemas = {split: paj.read_json(out / "prepared" / split / "metadata.jsonl").schema
+               for split in manifest["split"].unique()}
+    assert len({str(schema) for schema in schemas.values()}) == 1
+    assert str(schemas["real_test"].field("knock_source").type) == "string"
 
 
 def test_real_knock_clips_are_added_as_non_synthetic_knock(tmp_path):

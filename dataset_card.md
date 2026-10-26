@@ -85,12 +85,12 @@ With `datasets` 4 or newer, reading the audio also needs `pip install torchcodec
 ```
 manifest.csv                        one row per clip (all splits)
 prepared/<split>/<label>/*.wav      the clips
-prepared/<split>/metadata.csv       that split's rows of the manifest
+prepared/<split>/metadata.jsonl     that split's rows of the manifest
 ```
 
 | Column | Meaning |
 |---|---|
-| `file_name` | path of the clip (in `manifest.csv`: from the dataset root; in `metadata.csv`: from the split folder) |
+| `file_name` | path of the clip (in `manifest.csv`: from the dataset root; in `metadata.jsonl`: from the split folder) |
 | `label` | `healthy`, `engine_knock` or `misfire` |
 | `split` | `train`, `validation`, `test` or `real_test` |
 | `group` | clips that share a recording have the same group, e.g. `youtube:DqOGNij7qIE` |

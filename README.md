@@ -65,7 +65,7 @@ data/
   prepared/           the clips to train on
     train/, validation/, test/, real_test/
       <label>/          healthy/, engine_knock/, misfire/
-      metadata.csv      that split's rows of the manifest (read by Hugging Face)
+      metadata.jsonl    that split's rows of the manifest (read by Hugging Face)
   manifest.csv        one row per prepared clip
 ```
 

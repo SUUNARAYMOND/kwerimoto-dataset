@@ -5,7 +5,7 @@
 Output (under --out, default "data"):
     raw/          untouched copies of the source files
     prepared/     mono, 16 kHz, 16-bit WAV, at most 10 s, in <split>/<label>/ folders;
-                  each split folder also has a metadata.csv (its rows of the manifest)
+                  each split folder also has a metadata.jsonl (its rows of the manifest)
     manifest.csv  one row per prepared clip, with its label, split and source
 """
 import argparse
@@ -87,9 +87,11 @@ def build_dataset(revix_root, out_dir="data", hf_dir=None, audioset_dir=None, se
 
     manifest = kept[MANIFEST_COLUMNS].sort_values("file_name", ignore_index=True)
     manifest.to_csv(out_dir / "manifest.csv", index=False)
-    for split, part in manifest.groupby("split"):  # what Hugging Face reads to build each split
-        part.assign(file_name=part["file_name"].str.removeprefix(f"prepared/{split}/")).to_csv(
-            prepared_dir / split / "metadata.csv", index=False)
+    # What Hugging Face reads to build each split. JSON keeps each column's type, so a column
+    # that is empty in one split (knock_source in real_test) still matches the others.
+    for split, part in manifest.groupby("split"):
+        part.assign(file_name=part["file_name"].str.removeprefix(f"prepared/{split}/")).to_json(
+            prepared_dir / split / "metadata.jsonl", orient="records", lines=True)
     print_summary(candidates, manifest, removed)
     return manifest
 
