@@ -5,3 +5,6 @@ __pycache__/
 
 # Audio and generated outputs are shared through Hugging Face, not Git.
 data/
+
+# Results a notebook saves when run outside Colab.
+outputs/

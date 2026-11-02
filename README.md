@@ -86,6 +86,14 @@ uv run kwerimoto-upload --repo rayyyyy007/kwerimoto-engine-sounds
 
 This uploads `manifest.csv`, `prepared/` and the card, never `raw/`.
 
+## Notebooks
+
+Model notebooks live in `notebooks/`. They run in Google Colab and load the dataset from Hugging Face.
+
+| Notebook | Model | |
+|---|---|---|
+| `yamnet_baseline.ipynb` | frozen YAMNet features + small three-class classifier | [Open in Colab](https://colab.research.google.com/github/SUUNARAYMOND/kwerimoto-dataset/blob/main/notebooks/yamnet_baseline.ipynb) |
+
 ## What each step does
 
 1. **Gather.** List every Revix car clip from Revix's metadata (both of their splits), every Hugging Face
